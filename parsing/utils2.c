@@ -6,7 +6,7 @@
 /*   By: ibouram <ibouram@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/13 00:40:47 by ibouram           #+#    #+#             */
-/*   Updated: 2024/06/01 22:06:33 by ibouram          ###   ########.fr       */
+/*   Updated: 2024/07/31 00:27:04 by ibouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ size_t	ft_strlcat(char *dst, char *src, size_t dstsize)
 	return (len_dst + len_src);
 }
 
-char	*ft_strjoin(char *s1, char *s2)
+char	*ft_strjoin_parse(char *s1, char *s2)
 {
 	int		t_len;
 	char	*s;
@@ -61,7 +61,7 @@ char	*ft_strjoin(char *s1, char *s2)
 	if (!s2)
 		return (ft_strdup(s1));
 	t_len = ft_strlen(s1) + ft_strlen(s2);
-	s = (char *)malloc (t_len + 1);
+	s = (char *)gv_coll (t_len + 1);
 	if (!s)
 		return (NULL);
 	*s = '\0';
@@ -81,32 +81,16 @@ char	*ft_substr(char *s, int start, int len)
 		return (ft_strdup(""));
 	if (len > ft_strlen(s) - start)
 		len = ft_strlen(s) - start;
-	sub = (char *) malloc(len + 1);
+	sub = (char *) gv_coll(len + 1);
 	if (!sub)
 		return (NULL);
 	i = 0;
 	while (i < len && s[start])
 	{
 		sub[i] = s[start];
-		start++; 
+		start++;
 		i++;
 	}
 	sub[i] = '\0';
 	return (sub);
 }
-
-int	ft_isalnum(int c)
-{
-	if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')
-		|| (c >= '0' && c <= '9'))
-		return (1);
-	return (0);
-}
-
-int	ft_isnum(int n)
-{
-	if (n >= '0' && n <= '9')
-		return (1);
-	return (0);
-}
-

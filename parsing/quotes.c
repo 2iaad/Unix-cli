@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   quotes.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ibouram <ibouram@student.42.fr>            +#+  +:+       +#+        */
+/*   By: zderfouf <zderfouf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/05 17:05:10 by ibouram           #+#    #+#             */
-/*   Updated: 2024/06/01 22:06:33 by ibouram          ###   ########.fr       */
+/*   Updated: 2024/08/04 18:33:08 by zderfouf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,15 +40,36 @@ int	valid_meta(char *line, int i, int j, int valid)
 	return (valid);
 }
 
-int	valid_meta2(char *line, int i, int j, int valid)
+int	handle_meta(char *line, int *j, int i, int *valid)
 {
 	int		in1;
 	int		in2;
 	char	quote;
 
+	in1 = *j;
+	quote = line[(*j)++];
+	while (line[*j] && line[*j] != quote)
+		(*j)++;
+	if (line[*j] == quote)
+	{
+		in2 = *j;
+		(*j)++;
+	}
+	if (i > in1 && i < in2)
+	{
+		*valid = 0;
+		return (1);
+	}
+	return (0);
+}
+
+int	vm2(char *line, int i, int j, int valid)
+{
+	char	quote;
+
 	while (line[j])
 	{
-		if (line[j] == '\"')
+		if (line[j] == -2)
 		{
 			quote = line[j++];
 			while (line[j] && line[j] != quote)
@@ -56,29 +77,16 @@ int	valid_meta2(char *line, int i, int j, int valid)
 			if (line[j])
 				j++;
 		}
-		else if (line[j] == '\'')
+		else if (line[j] == -1)
 		{
-			in1 = j;
-			quote = line[j++];
-			while (line[j] && line[j] != quote)
-				j++;
-			if (line[j] == quote)
-			{
-				in2 = j;
-				j++; // to skip the quote
-			}
-			if (i > in1 && i < in2)
-			{
-				valid = 0;
+			if (handle_meta(line, &j, i, &valid))
 				break ;
-			}
 		}
 		else
 			j++;
 	}
 	return (valid);
 }
-
 
 int	check_quotes(char *line)
 {
@@ -102,5 +110,3 @@ int	check_quotes(char *line)
 	}
 	return (1);
 }
-
-

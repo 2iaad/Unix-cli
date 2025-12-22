@@ -6,7 +6,7 @@
 /*   By: ibouram <ibouram@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/06 18:06:06 by ibouram           #+#    #+#             */
-/*   Updated: 2024/06/01 22:06:33 by ibouram          ###   ########.fr       */
+/*   Updated: 2024/07/31 00:26:50 by ibouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ int	ft_strlen(char *s)
 	i = 0;
 	if (!s)
 		return (0);
-	while(s[i])
+	while (s[i])
 	{
 		i++;
 	}
@@ -35,7 +35,8 @@ void	ft_putstr_fd(char *s, int fd)
 
 int	whitespaces(char s)
 {
-	return (s == ' ' || s == '\t' || s == '\n' || s == '\v' || s == '\f' || s == '\r');
+	return (s == ' ' || s == '\t' || s == '\n'
+		|| s == '\v' || s == '\f' || s == '\r');
 }
 
 char	*ft_strdup(char *s1)
@@ -43,7 +44,9 @@ char	*ft_strdup(char *s1)
 	int		i;
 	char	*dest;
 
-	dest = (char *) malloc(ft_strlen(s1) + 1);
+	if (!s1)
+		return (NULL);
+	dest = (char *) gv_coll(ft_strlen(s1) + 1);
 	if (!dest)
 		return (NULL);
 	i = 0;
@@ -56,17 +59,7 @@ char	*ft_strdup(char *s1)
 	return (dest);
 }
 
-int delimiters(char c)
+int	delimiters(char c)
 {
-	// evrinthing that is not a letter or a number and '_' is a delimiter
 	return (!ft_isalnum(c) && c != '_');
-}
-
-int	ft_strcmp(char *s1, char *s2)
-{
-	int i = 0;
-
-	while (s1[i] == s2[i] && s1[i] && s2[i])
-		i++;
-	return (s1[i] - s2[i]);
 }

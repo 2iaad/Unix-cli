@@ -6,17 +6,17 @@
 /*   By: ibouram <ibouram@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/09 03:09:32 by ibouram           #+#    #+#             */
-/*   Updated: 2024/06/01 22:06:33 by ibouram          ###   ########.fr       */
+/*   Updated: 2024/07/31 00:25:30 by ibouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include"../minishell.h"
+#include "../minishell.h"
 
-t_token	*ft_lstnew(char *content, int type)
+t_token	*ft_lstnew_parse(char *content, int type)
 {
 	t_token	*n;
 
-	n = (t_token *)malloc(sizeof(t_token));
+	n = (t_token *)gv_coll(sizeof(t_token));
 	if (!n)
 		return (NULL);
 	n->token = content;
@@ -25,7 +25,7 @@ t_token	*ft_lstnew(char *content, int type)
 	return (n);
 }
 
-t_token	*ft_lstlast(t_token *lst)
+t_token	*ft_lstlast_parse(t_token *lst)
 {
 	t_token	*last;
 
@@ -40,7 +40,7 @@ t_token	*ft_lstlast(t_token *lst)
 	return (last);
 }
 
-t_env	*ft_lstlast2(t_env *lst)
+t_env	*ft_lstlast2_parse(t_env *lst)
 {
 	t_env	*last;
 
@@ -53,7 +53,7 @@ t_env	*ft_lstlast2(t_env *lst)
 	return (last);
 }
 
-void	ft_lstadd_back(t_token **lst, t_token *new)
+void	ft_lstadd_back_parse(t_token **lst, t_token *new)
 {
 	t_token	*last;
 
@@ -66,25 +66,22 @@ void	ft_lstadd_back(t_token **lst, t_token *new)
 	}
 	else
 	{
-		last = ft_lstlast(*lst);
+		last = ft_lstlast_parse(*lst);
 		last->next = new;
 	}
 }
 
-void	ft_lstadd_back_2(t_env **lst, t_env *new)
+t_final	*ft_lstlast3_parse(t_final *lst)
 {
-	t_env	*last;
+	t_final	*last;
 
-	if (!new || !lst)
-		return ;
-	if (!*lst)
+	if (!lst)
+		return (NULL);
+	last = NULL;
+	while (lst)
 	{
-		*lst = new;
-		return ;
+		last = lst;
+		lst = lst->next;
 	}
-	else
-	{
-		last = ft_lstlast2(*lst);
-		last->next = new;
-	}
+	return (last);
 }

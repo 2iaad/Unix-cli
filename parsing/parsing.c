@@ -6,180 +6,119 @@
 /*   By: ibouram <ibouram@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/07 09:56:52 by ibouram           #+#    #+#             */
-/*   Updated: 2024/06/01 22:06:33 by ibouram          ###   ########.fr       */
+/*   Updated: 2024/08/04 15:50:48 by ibouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
-// ****TO DO****
 
-// 5. NORMINETTE
-// 6. SIGNALS
-// 7. exit status
-// $d | ls
-//export A="d d" | echo $A
-// z"" z " "
-char	*parse_protec(char *line)
+char	**merg_cmd(t_final	*lst)
 {
-	int	i;
+	int		i;
+	char	**full_cmd;
 
 	i = 0;
-	while (line[i])
+	while ((lst)->args && ((lst))->args[i])
+		i++;
+	full_cmd = (char **) gv_coll (sizeof(char *) * (i + 2));
+	full_cmd[0] = ft_strdup((lst)->cmd);
+	i = 0;
+	while ((lst)->args && (lst)->args[i])
 	{
-		if (valid_meta(&line[i], i, 0, 1))
-		{
-			if (line[i] == '<' && line[i + 1] == '<')
-			{
-				line[i] = -2;
-				line[i + 1] = -2;
-				i++;
-			}
-			else if (line[i] == '>' && line[i + 1] == '>')
-			{
-				line[i] = -4;
-				line[i + 1] = -4;
-				i++;
-			}
-			else if (line[i] == '|')
-				line[i] = -5;
-			else if (line[i] == '<')
-				line[i] = -1;
-			else if (line[i] == '>')
-				line[i] = -3;
-		}
+		full_cmd[i + 1] = ft_strdup((lst)->args[i]);
 		i++;
 	}
-	return (line);
+	full_cmd[i + 1] = NULL;
+	return (full_cmd);
 }
 
-
-void print_struct(t_token *token)
+void	init_final_cmd(t_final ***lst)
 {
-	t_token *tmp_token = token;
-	while (tmp_token)
+	char	**str;
+	t_final	*tmp;
+
+	tmp = *(*lst);
+	while (tmp)
 	{
-		printf("token: %s, type: ", tmp_token->token);
-		switch (tmp_token->type)
-		{
-			case (0):
-				printf("WORD\n");
-				break ;
-			case (1):
-				printf("CMD\n");
-				break ;
-			case (2):
-				printf("OPTION\n");
-				break ;
-			case (3):
-				printf("PIPE\n");
-				break ;
-			case (4):
-				printf("REDIR_IN\n");
-				break ;
-			case (5):
-				printf("REDIR_OUT\n");
-				break ;
-			case (6):
-				printf("REDIR_APPEND\n");
-				break ;
-			case (7):
-				printf("REDIR_HEREDOC\n");
-				break ;
-			case (8):
-				printf("IN_FILE\n");
-				break ;
-			case (9):
-				printf("OUT_FILE\n");
-				break ;
-			case (10):
-				printf("AOUT_FILE\n");
-				break ;
-			case (11):
-				printf("DELIMITER\n");
-				break ;
-		}
-		tmp_token = tmp_token->next;
+		str = merg_cmd(tmp);
+		(tmp)->final_cmd = str;
+		(tmp) = (tmp)->next;
 	}
 }
-t_final	*parce_line(char *line, t_env **env)
+
+void	reset_quotes(t_token **token)
+{
+	t_token	*node;
+	int		i;
+
+	node = *token;
+	while (node)
+	{
+		i = 0;
+		while (node->token && node->token[i])
+		{
+			if (node->token[i] == -1)
+				node->token[i] = '\'';
+			else if (node->token[i] == -2)
+				node->token[i] = '\"';
+			i++;
+		}
+		node = node->next;
+	}
+}
+
+int	parce_line(t_final **final_cmd, t_env *env, char *line)
 {
 	char	*tmp;
 	t_token	*token;
-	token = NULL;
-	char	**split = NULL; // to free the line
-	t_final	*final_cmd;
+	char	**split;
 
+	(1) && (tmp = NULL, token = NULL, split = NULL);
 	if (!check_quotes(line))
 	{
-		free (line);
 		ft_putstr_fd("syntax error related to unclosed quote\n", 2);
-		return (NULL);
+		return (-1);
 	}
-	tmp = line;
-	line = trim_line(line);
+	(1) && (tmp = line, line = trim_line(line));
 	if (line == NULL)
-		return (NULL);
+		return (-1);
 	line = space(line, 0, 0);
-	if (syntax_error(line))
-		return (NULL);
-	line = parse_protec(line);
-	line = expand_env(line, env);
-	// if find expand_env should stop the program
 	split = split_line(line);
-	tokenizer(split, &token);
-	token_quotes(&token);
-	final_cmd = struct_init(&token);
-	// print_struct(token);
-	free(tmp);
-	return (final_cmd);
+	if (tokenizer(split, &token, env))
+	{
+		exit_status(258, 1);
+		return (-1);
+	}
+	(read_herdoc(token), token_quotes(&token));
+	(1) && (reset_quotes(&token), *final_cmd = struct_init(&token));
+	init_final_cmd(&final_cmd);
+	return (1);
 }
 
-
-t_final	*read_from_input(t_env **env)
+void	read_from_input(t_final *final_cmd, t_env **env_list, char **envp)
 {
-	char *line;
-	t_final *final_cmd;
+	int				r;
+	struct termios	p;
+	char			*line;
 
-	printf("\nWelcome to minishell Program.\nMade by Legends ibouram and zdefouf.\n");
-	printf("For more details, please visit https://github.com/2iaad/minishell.\n");
+	(void)envp;
+	tcgetattr(0, &p);
+	tcsetattr(0, 0, &p);
+	rl_catch_signals = 0;
+	init_signals();
 	while (1)
 	{
-		// printf("\nWelcome to minishell Program.\nMade by Legends ibouram and zdefouf.\n");
-		// printf("For more details, please visit https://github.com/2iaad/minishell.\n");
 		line = readline("minishell$ ");
-		//displays the prompt "minishell$ " and waits for the user to enter a command. 
-		// The entered command is stored in the line variable as a dynamically allocated string.
-		if (!line)//If the user presses Ctrl-D, the program should exit. this if the user wanna exit
-		{
-			printf("exit\n");
-			exit(0);
-		}
+		if (!line || !isatty(0))
+			return (ft_putstr_fd("exit\n", 2), r = exit_status(1, 0), exit (r));
 		if (!line[0])
 		{
 			free(line);
 			continue ;
 		}
 		add_history(line);
-		final_cmd = parce_line(line, env);
+		if (parce_line(&final_cmd, *env_list, line) != -1)
+			execution(final_cmd, env_list, &p);
+		free(line);
 	}
-}
-// void f(void)
-// {
-// 	system("leaks minishell");
-// }
-int main(int ac, char **av, char **envp)
-{
-	t_final *final_cmd;
-	// atexit(f);
-	// rl_catch_signals = 0;
-	if (ac > 1)
-	{
-		write(2, "Error: too many arguments\n", 26);
-		return (1);
-	}
-	(void)av;
-	t_env *env;
-	env = get_env(envp);
-	final_cmd = read_from_input(&env);
-	// execution(final_cmd, &env);
 }

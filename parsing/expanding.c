@@ -3,106 +3,83 @@
 /*                                                        :::      ::::::::   */
 /*   expanding.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ibouram <ibouram@student.42.fr>            +#+  +:+       +#+        */
+/*   By: zderfouf <zderfouf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/12 03:47:44 by ibouram           #+#    #+#             */
-/*   Updated: 2024/06/01 22:06:33 by ibouram          ###   ########.fr       */
+/*   Updated: 2024/08/04 18:39:52 by zderfouf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-t_env	*get_env(char **envp)
+int	exit_status(int status, int set)
 {
-	t_env *env_list;
-	t_env *env;
+	static int	current_status = 0;
 
-	env_list = NULL;
-	while (*envp)
-	{
-		int j = 0;
-		while ((*envp)[j] && (*envp)[j] != '=')
-			j++;
-		env = malloc(sizeof(t_env));
-		if (!env)
-			return (0);
-		env->variable = ft_substr((*envp), 0, j);
-		env->value = ft_strdup((*envp) + j + 1);
-		env->next = NULL;
-		ft_lstadd_back_2(&env_list, env);
-		envp++;
-	}
-	// t_env *tmp = env_list;
-	// while (tmp)
-	// {
-	// 	printf("variable = %s\n", tmp->variable);
-	// 	printf("value = %s\n", tmp->value);
-	// 	tmp = tmp->next;
-	// }
-	return (env_list);
+	if (set != 0)
+		current_status = status;
+	return (current_status);
 }
 
-char	*expand_env(char *line, t_env **env)
+char	*handle_num(char *line, int *i)
 {
-	int 	i;
-	int		len;
+	int		var_len;
 	char	*new_line;
 	char	*new;
-	t_env	*tmp_env;
-	t_env	*expander;
-	int		var_len;
 
-	i = 0;
+	var_len = 1;
 	new = NULL;
-	expander = NULL;
-	while (line[i])
-	{
-		len = 0;
-		while (!(line[i + len] == '$' && valid_meta2(line, i + len, 0, 1)) && line[i + len] != '\0')
-			len++;
-		if (len > 0) // if there is a string before the variable
-		{
-			new_line = ft_substr(line, i, len);
-			new = ft_strjoin(new, new_line);
-		}
-		if (line[i + len] == '$' && (line[i + len + 1] == '\0' || line[i + len + 1] == ' '
-			|| line[i + len + 1] == '\'' || line[i + len + 1] == '\"'))
-		{
-			new = ft_strjoin(new, "$");
-			i += len + 1;
-		}
-		else if (line[i + len] == '$' && ft_isnum(line[i + len + 1]))
-		{
-			var_len = 1;
-			while(line[i + len + var_len] && ft_isnum(line[i + len + var_len]))
-				var_len++;
-			new_line = ft_substr(line, i + len + 2, var_len - 2);
-			new = ft_strjoin(new, new_line);
-			i += len + var_len;
-		}
-		else if (line[i + len] == '$')
-		{
-			// printf("line = %s\n", line);
-			var_len = 1;
-			while(line[i + len + var_len] && !delimiters(line[i + len + var_len]))
-				var_len++;
-			tmp_env = *env;
-			new_line = ft_substr(line, i + len + 1, var_len - 1);
-			while (tmp_env)
-			{
-				if (ft_strcmp(tmp_env->variable, new_line) == 0)
-				{
-					expander = tmp_env;
-					new = ft_strjoin(new, expander->value);
-					break ;
-				}
-				tmp_env = tmp_env->next;
-			}
-			i += len + var_len;
-		}
-		else
-			i += len;
-	}
+	while (line[*i + var_len] && ft_isnum(line[*i + var_len]))
+		var_len++;
+	new_line = ft_substr(line, *i + 2, var_len - 2);
+	new = ft_strjoin_parse(new, new_line);
+	*i += var_len;
 	return (new);
 }
 
+char	*expand_env(char *lin, t_env *env, t_token *token)
+{
+	t_parse	ps;
+	t_env	*expander;
+
+	(void)token;
+	(1) && (ps.i = 0, ps.new = NULL, expander = NULL);
+	while (lin[ps.i])
+	{
+		ps.len = 0;
+		while (!(lin[ps.i + ps.len] == '$'
+				&& vm2(lin, ps.i + ps.len, 0, 1)) && lin[ps.i + ps.len] != '\0')
+			ps.len++;
+		if (ps.len > 0)
+			expand_env_1(&ps, lin, ps.i);
+		if (check_dollar_condition(lin, ps.i, ps.len))
+			expand_env_2(&ps, &ps.i);
+		else if (lin[ps.i + ps.len] == '$'
+			&& ft_isnum(lin[ps.i + ps.len + 1]))
+			ps.new = handle_num(lin, &ps.i);
+		else if (lin[ps.i + ps.len] == '$')
+			handle_dollar(&ps, lin, env, &expander);
+		else
+			ps.i += ps.len;
+	}
+	return (ps.new);
+}
+
+void	expanding(t_token *token, t_env *env)
+{
+	t_token	*tmp_token;
+	char	*tmp;
+
+	tmp_token = token;
+	while (tmp_token)
+	{
+		if (tmp_token->type != REDIR_IN && tmp_token->type != REDIR_OUT
+			&& tmp_token->type != REDIR_APPEND
+			&& tmp_token->type != REDIR_HEREDOC && tmp_token->type != DELIMITER)
+		{
+			tmp = tmp_token->token;
+			tmp_token->token = expand_env(tmp_token->token, env, token);
+		}
+		tmp_token = tmp_token->next;
+	}
+}
