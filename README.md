@@ -1,48 +1,47 @@
-### 🖥️ Minishell  
-📝 **Presentation**  
+<div align="center">
 
-Minishell is a project aimed at recreating a **basic command-line interpreter**, inspired by **Bash**.  
-This project explores **process management, inter-process communication, and file & descriptor manipulation in C**.  
+# Minishell
 
-The objective is to implement a **shell** capable of executing Unix commands while handling advanced features such as **pipes, redirections, and signals**.  
+**As beautiful as a shell**
 
-🛠️ **Features**  
+Minishell is a project aimed at creating a simple shell, similar to Bash. This project will enhance your understanding of processes and file descriptors in Unix-like operating systems. 
 
-✅ **Mandatory Features:**  
-- Display a prompt (`minishell$`) waiting for user input.  
-- Command history management using `readline()`.  
-- Execute commands via `execve()`.  
-- Handle both **relative and absolute paths** (`PATH`).  
-- **File redirections:**  
-  - `<` : Input redirection.  
-  - `>` : Output redirection.  
-  - `<<` : **Heredoc** with a delimiter.  
-  - `>>` : Append mode output redirection.  
-- **Pipe management (`|`)** to chain multiple commands.  
-- **Environment variable management (`$VAR`).**  
-- Expand **`$?`** to retrieve the exit code of the last command.  
-- **Signal handling** (`ctrl-C`, `ctrl-D`, `ctrl-\`):  
-  - `ctrl-C` displays a new prompt.  
-  - `ctrl-D` closes the shell.  
-  - `ctrl-\` does nothing.  
-- Implementation of the following **built-in commands:**  
-  - `echo` (with `-n` option).  
-  - `cd` (with absolute or relative path).  
-  - `pwd` (prints the current directory).  
-  - `export` (add/modify environment variables).  
-  - `unset` (remove environment variables).  
-  - `env` (display environment variables).  
-  - `exit` (exit the shell with a status code).  
+</div>
 
-🎯 **Bonus Features (if implemented):**  
-- Logical operators (`&&`, `||`) with **priority management (`()`)**.  
-- **Wildcard (`*`) support** to list matching files in the current directory.  
+## How to use it
+```bash
+git clone https://github.com/2iaad/Mini-Shell 2iaad && cd 2iaad && make && ./minishell
+```
 
-📌 **Technologies Used**  
+## Contents
 
-- **C** (Norminette-compliant)  
-- **Process management** (`fork()`, `execve()`, `wait()`, `signal()`)  
-- **File redirections** (`dup2()`)  
-- **Pipes** (`pipe()`)  
-- **Environment variable manipulation** (`getenv()`, `setenv()`)  
-- **User input handling** (`readline()`)  
+- [I. Introduction](#i-introduction)
+- [II. Mandatory Part](#ii-mandatory-part)
+- [III. Bonus Part](#iii-bonus-part)
+
+## I. Introduction
+The existence of shells is fundamental to the field of computing. They provide a way for users to interact with computers through command lines rather than low-level hardware manipulations. Minishell allows you to step back in time and tackle the challenges faced before modern GUI environments, providing a hands-on experience with shell programming.
+
+- **Program Name**: `minishell`
+- **Turn In Files**: `Makefile`, `*.h`, `*.c`
+- **Arguments**: 
+  - Use external functions like `readline`, `printf`, `malloc`, etc.
+- **Libft Authorized**: Yes
+- **Description**: Implement a shell that:
+  - Displays a prompt when waiting for a command.
+  - Maintains a command history.
+  - Searches and executes commands based on the `PATH` variable or relative/absolute paths.
+  - Avoids using more than one global variable for signal handling.
+  - Implements quote handling for both single (`'`) and double (`"`) quotes.
+  - Implements input/output redirection and piping.
+  - Expands environment variables and the exit status of the last command.
+  - Handles control signals (`ctrl-C`, `ctrl-D`, `ctrl-\`) appropriately.
+    
+- **Builtins to Implement**:
+  - `echo` (with `-n`)
+  - `cd` (with paths)
+  - `pwd`
+  - `export`
+  - `unset`
+  - `env`
+  - `exit`
