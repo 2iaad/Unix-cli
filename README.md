@@ -13,7 +13,7 @@ This project is aimed at creating a simple shell, similar to Bash. This project 
 git clone https://github.com/2iaad/Unix-cli 2iaad && cd 2iaad && make && ./minishell
 ```
 
-<!-- <br></br> -->
+<br></br>
 
 
 <div align='center'>
@@ -29,7 +29,11 @@ Key Shell Functionalities
 
 Unix-cli’s parsing system involves tokenizing input, recognizing built-in and external commands, and handling arguments and operators. This includes:
 
+
+<div align='center'>
+
 ![parsing&executionFlow](https://aosabook.org/static/bash/bash-article-diagram.png)
+</div>
 
 1.  **Lexical Analysis**: Breaking down commands using `libft` functions (e.g., `ft_split`), managing quotes, special characters, and whitespace.
 2.  **Syntax Parsing**: Identifying commands, arguments, and operators like pipes (`|`) and redirections (`>`, `<`).
@@ -68,13 +72,8 @@ Unix-cli responds to Unix signals (`SIGINT`, `SIGQUIT`) to manage command interr
 
 * * *
 
-### Educational Value
+### What i have learned
 
-Developing and using core programming concepts like memory management, formatted output, and file I/O. Unix-cli game me programming skills that scale to larger projects.
+Developing and using essential programming concepts like memory management, IPC (inter process communication), formatted output, and file I/O. This project game me programming skills that im pretty sure will help build larger projects.
 
-* * *
-
-Conclusion
-----------
-
-Unix-cli offers an experience in shell development, covering Unix-like systems, process management, and inter-process communication.
+Thanks for reading sa7bi ;) Enjoy!
