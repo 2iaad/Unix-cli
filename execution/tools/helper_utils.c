@@ -63,7 +63,7 @@ bool	add_pwd(t_env **env)
 	char	*value;
 	char	*s;
 
-	value = getcwd(NULL, -1337);
+	value = getcwd(NULL, 0);
 	if (!value)
 		return (perror("getcwd"), exit_status(1, 1), true);
 	s = ft_strdup(value);

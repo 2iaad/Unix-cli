@@ -24,8 +24,7 @@ void	permission_checker(char *cmd)
 		ft_putstr_fd(": Permission denied\n", 2);
 		exit(126);
 	}
-	stat(cmd, &p);
-	if (S_ISDIR(p.st_mode))
+	if (stat(cmd, &p) == 0 && S_ISDIR(p.st_mode))
 	{
 		if (ft_strcmp("..", cmd) && ft_strcmp(".", cmd))
 		{

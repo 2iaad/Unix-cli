@@ -31,13 +31,14 @@ bool	init_pwd(t_env ***env, char **oldpwd)
 	t_env	*tmp;
 	bool	flag;
 
-	(1 == 1) && ((tmp = *(*env)) && (flag = false));
+	tmp = *(*env);
+	flag = false;
 	while (tmp)
 	{
 		if (!ft_strncmp(tmp->key, "PWD", 3))
 		{
 			(1) && ((flag = true) && (*oldpwd = tmp->value));
-			tmp->value = getcwd(NULL, -1337);
+			tmp->value = getcwd(NULL, 0);
 			if (!tmp->value)
 				return (perror("getcwd"), exit_status(1, 1), true);
 			add_to_gc(tmp->value);
@@ -56,7 +57,9 @@ bool	init_oldpwd(t_env	**env)
 	t_env	*tmp;
 	char	*oldpwd;
 
-	(1 == 1) && ((tmp = *env) && (oldpwd = NULL) && (flag = false));
+	tmp = *env;
+	oldpwd = NULL;
+	flag = false;
 	if (init_pwd(&env, &oldpwd))
 		return (true);
 	while (tmp)

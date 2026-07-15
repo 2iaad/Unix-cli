@@ -51,7 +51,8 @@ void	file_opener(t_file *files)
 	int	i;
 	int	fd;
 
-	(1 == 1) && ((i = 0) && (fd = 0));
+	i = 0;
+	fd = 0;
 	while (files && files[i].type != 42)
 	{
 		if (files[i].file == NULL)

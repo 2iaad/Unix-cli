@@ -28,38 +28,43 @@ EXECUTIONSRC = 	execution/builtins/cd.c execution/builtins/echo.c execution/buil
 RM = rm -rf
 NAME = minishell
 CC = cc
-FLAGS = -fsanitize=address -ggdb3 -Wall -Wextra -Werror
-READLINE = $(shell brew --prefix readline)
+FLAGS = -ggdb3 # -fsanitize=address -Wall -Wextra -Werror
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-FLAGS = #-fsanitize=address
+# macOS: brew readline is keg-only, needs explicit paths
+UNAME := $(shell uname -s)
+ifeq ($(UNAME), Darwin)
+READLINE := $(shell brew --prefix readline 2>/dev/null)
+INCS = -I$(READLINE)/include
+LIBS = -L$(READLINE)/lib -lreadline
+else
+INCS =
+LIBS = -lreadline
+endif
 
-SRCS =	builtins/builtins_1.c \
-		builtins/identifier.c \
-
-TOOL_SRCS = tools/tool_1.c \
-			tools/tool_split.c \
-
-OBJS = $(SRCS:.c=.o)
-TOOL_OBJS = $(TOOL_SRCS:.c=.o)
-=======
 PARSINGOBJS = $(PARSINGSRC:.c=.o)
 EXECUTIONOBJS = $(EXECUTIONSRC:.c=.o)
->>>>>>> origin/merged
-=======
-PARSINGOBJS = $(PARSINGSRC:.c=.o)
-EXECUTIONOBJS = $(EXECUTIONSRC:.c=.o)
->>>>>>> origin/ziad
 
-all: $(NAME)
+all: deps $(NAME)
 	@printf "\033[32m[ ✔ ] %s\n\033[0m" "DONE"
-$(NAME): $(PARSINGOBJS) $(EXECUTIONOBJS)
-	@$(CC) $(FLAGS) -L$(READLINE)/lib -lreadline $^ -o $@
 
+# install readline dev headers if missing, using whatever package manager exists
+deps:
+	@echo '#include <readline/readline.h>' | $(CC) $(INCS) -E -x c - >/dev/null 2>&1 || { \
+		echo "readline headers missing, installing..."; \
+		if command -v brew >/dev/null 2>&1; then brew install readline; \
+		elif command -v apt-get >/dev/null 2>&1; then sudo apt-get install -y libreadline-dev; \
+		elif command -v dnf >/dev/null 2>&1; then sudo dnf install -y readline-devel; \
+		elif command -v pacman >/dev/null 2>&1; then sudo pacman -S --noconfirm readline; \
+		elif command -v zypper >/dev/null 2>&1; then sudo zypper install -y readline-devel; \
+		elif command -v apk >/dev/null 2>&1; then sudo apk add readline-dev; \
+		else echo "no known package manager; install readline dev package manually" && exit 1; fi; \
+	}
+
+$(NAME): $(PARSINGOBJS) $(EXECUTIONOBJS)
+	@$(CC) $(FLAGS) $^ $(LIBS) -o $@
 
 %.o: %.c minishell.h
-	@$(CC) $(FLAGS) -I$(READLINE)/include -c $< -o $@
+	@$(CC) $(FLAGS) $(INCS) -c $< -o $@
 
 clean:
 	@$(RM) $(PARSINGOBJS) $(EXECUTIONOBJS)
@@ -69,3 +74,5 @@ fclean: clean
 	@printf "\033[32m[ ✔ ] %s\n\033[0m" "Clean"
 
 re: fclean all
+
+.PHONY: all deps clean fclean re

@@ -68,7 +68,8 @@ void	unset(t_final	*lst, t_env **env_list)
 	int		i;
 	bool	flag;
 
-	(1 == 1) && ((i = 0) && (flag = false));
+	i = 0;
+	flag = false;
 	if (!lst->final_cmd[1])
 		return ((void) exit_status(0, 1));
 	while (lst->final_cmd[++i])

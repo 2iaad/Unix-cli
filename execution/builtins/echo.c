@@ -5,33 +5,17 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: zderfouf <zderfouf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-<<<<<<< HEAD:includes/tools.h
-/*   Created: 2024/05/03 10:13:21 by zderfouf          #+#    #+#             */
-/*   Updated: 2024/05/04 10:09:09 by zderfouf         ###   ########.fr       */
-=======
 /*   Created: 2024/05/03 10:17:21 by zderfouf          #+#    #+#             */
 /*   Updated: 2024/07/29 09:16:47 by zderfouf         ###   ########.fr       */
->>>>>>> origin/ziad:execution/builtins/echo.c
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
 
-<<<<<<< HEAD:includes/tools.h
-#include "minishell.h"
-
-int     ft_strlen(char *str);
-void    ft_free(char **str);
-int     ft_strcmp(char *s1, char *s2, int len);
-int     flag_check(char *s1);
-char	**ft_split(const char *s, char c);
-void    ft_putstr(char *str);
-=======
 void	echo(t_final	*lst)
 {
 	int	i;
 	int	flag;
->>>>>>> origin/ziad:execution/builtins/echo.c
 
 	i = 1;
 	if (!lst->final_cmd[1])

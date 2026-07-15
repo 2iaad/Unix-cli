@@ -23,6 +23,8 @@
 # include <limits.h>
 # include <stdbool.h>
 # include <sys/stat.h>
+# include <signal.h>
+# include <sys/wait.h>
 
 typedef struct s_garbage
 {
@@ -122,7 +124,7 @@ typedef struct s_args
 	t_env	**expander;
 }	t_args;
 
-int	g_signal;
+extern int	g_signal;
 
 //*------------------TOOLS------------------------*//
 //*---Parsing---*

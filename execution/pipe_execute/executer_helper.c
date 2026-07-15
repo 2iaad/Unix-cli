@@ -46,7 +46,8 @@ void	init_secfds(int *sec_fd, int flag)
 {
 	if (flag == 0)
 	{
-		(1 == 1) && (sec_fd[0] = dup(0)) && (sec_fd[1] = dup(1));
+		sec_fd[0] = dup(0);
+		sec_fd[1] = dup(1);
 		if (sec_fd[0] == -1 || sec_fd[1] == -1)
 			error("dup", 1337);
 	}
@@ -64,7 +65,8 @@ void	env_maker(t_env *envp, char ***env)
 	char	*str;
 	t_env	*tmp;
 
-	(1 == 1) && ((tmp = envp) && (i = 0));
+	tmp = envp;
+	i = 0;
 	while (tmp)
 	{
 		tmp = tmp->next;
@@ -73,7 +75,8 @@ void	env_maker(t_env *envp, char ***env)
 	*env = (char **) gv_coll (sizeof(char *) * (i + 1));
 	if (!*env)
 		return ;
-	(1 == 1) && ((tmp = envp) && (i = 0));
+	tmp = envp;
+	i = 0;
 	while (tmp)
 	{
 		str = ft_strjoin(tmp->key, "=");

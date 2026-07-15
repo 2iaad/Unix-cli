@@ -34,7 +34,7 @@ char	*look_for_paths(char **ev)
 		return ("/usr/gnu/bin:/usr/local/bin:/bin:/usr/bin:.");
 	while (*ev)
 	{
-		if (ft_strnstr(*ev, "PATH=", ft_strlen(*ev)))
+		if (ft_strnstr(*ev, "PATH=", 5))
 			return (*ev + ft_strlen("PATH="));
 		ev++;
 	}
@@ -69,7 +69,10 @@ char	*right_path(char **s_cmd, char **env)
 void	init_path(t_final *lst, char **env, char **path, int *flag)
 {
 	if (ft_strchr(lst->final_cmd[0], '/'))
-		(1 == 1) && (*path = lst->final_cmd[0]) && (*flag = 0);
+	{
+		*path = lst->final_cmd[0];
+		*flag = 0;
+	}
 	else
 	{
 		*path = right_path(lst->final_cmd, env);

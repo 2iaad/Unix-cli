@@ -48,7 +48,8 @@ void	export_command(t_final *lst, t_env **env_list)
 	bool	flag;
 	char	**str;
 
-	(1 == 1) && ((i = 0) && (flag = false));
+	i = 0;
+	flag = false;
 	if (!lst->final_cmd[1])
 		return (export(env_list));
 	while (lst->final_cmd[++i])

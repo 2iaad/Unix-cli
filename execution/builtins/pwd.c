@@ -16,7 +16,7 @@ void	pwd(void)
 {
 	char	*c_path;
 
-	c_path = getcwd(NULL, -1337);
+	c_path = getcwd(NULL, 0);
 	if (!c_path)
 	{
 		perror("getcwd");
