@@ -108,7 +108,7 @@ void	read_from_input(t_final *final_cmd, t_env **env_list, char **envp)
 	init_signals();
 	while (1)
 	{
-		line = readline("minishell$ ");
+		line = readline("\001\033[1;96m\002minishell \001\033[1;95m\002$\001\033[0m\002 ");
 		if (!line || !isatty(0))
 			return (ft_putstr_fd("exit\n", 2), r = exit_status(1, 0), exit (r));
 		if (!line[0])
